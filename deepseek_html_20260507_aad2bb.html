@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diagnóstico Binario - Sistema Educativo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #1a1a2e;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            flex-direction: column;
+            padding: 20px;
+        }
+
+        .presentation-container {
+            width: 100%;
+            max-width: 1000px;
+            aspect-ratio: 16/9;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .slide {
+            display: none;
+            padding: 60px 80px;
+            height: 100%;
+            position: absolute;
+            width: 100%;
+            top: 0;
+            left: 0;
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            flex-direction: column;
+        }
+
+        .slide.active {
+            display: flex;
+        }
+
+        .slide-header {
+            border-left: 6px solid #2c3e50;
+            padding-left: 20px;
+            margin-bottom: 30px;
+        }
+
+        .slide-title {
+            font-size: 2em;
+            color: #2c3e50;
+            font-weight: 700;
+        }
+
+        .slide-subtitle {
+            font-size: 1.1em;
+            color: #7f8c8d;
+            margin-top: 5px;
+        }
+
+        .slide-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .cover-title {
+            font-size: 2.8em;
+            color: #1a1a2e;
+            font-weight: 800;
+            line-height: 1.2;
+            margin-bottom: 15px;
+        }
+
+        .cover-subtitle {
+            font-size: 1.4em;
+            color: #e74c3c;
+            margin-bottom: 30px;
+        }
+
+        .cover-info {
+            font-size: 1em;
+            color: #555;
+            line-height: 1.8;
+        }
+
+        .data-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .data-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .data-card.red {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            box-shadow: 0 8px 25px rgba(245, 87, 108, 0.4);
+        }
+
+        .data-card.orange {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            box-shadow: 0 8px 25px rgba(250, 112, 154, 0.4);
+            color: #333;
+        }
+
+        .data-card.green {
+            background: linear-gradient(135deg, #a8edea 0%, #5f9ea0 100%);
+            box-shadow: 0 8px 25px rgba(95, 158, 160, 0.4);
+            color: #333;
+        }
+
+        .data-number {
+            font-size: 3em;
+            font-weight: 800;
+            display: block;
+        }
+
+        .data-label {
+            font-size: 0.9em;
+            margin-top: 5px;
+            opacity: 0.9;
+        }
+
+        .problem-tree {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .tree-center {
+            background: #e74c3c;
+            color: white;
+            padding: 20px 40px;
+            border-radius: 15px;
+            font-weight: 700;
+            font-size: 1.2em;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(231, 76, 60, 0.4);
+        }
+
+        .tree-causes, .tree-effects {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .tree-item {
+            background: #fff;
+            border: 2px solid #e0e0e0;
+            padding: 15px 20px;
+            border-radius: 10px;
+            font-size: 0.85em;
+            max-width: 200px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .tree-causes .tree-item {
+            border-top: 4px solid #e74c3c;
+        }
+
+        .tree-effects .tree-item {
+            border-top: 4px solid #3498db;
+        }
+
+        .chart-bar {
+            display: flex;
+            align-items: center;
+            margin: 12px 0;
+        }
+
+        .chart-label {
+            width: 280px;
+            font-size: 0.9em;
+            color: #444;
+            text-align: right;
+            padding-right: 15px;
+        }
+
+        .chart-fill-container {
+            flex: 1;
+            background: #ecf0f1;
+            height: 35px;
+            border-radius: 20px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .chart-fill {
+            height: 100%;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            padding-left: 15px;
+            color: white;
+            font-weight: 700;
+            font-size: 0.9em;
+            transition: width 1s ease;
+        }
+
+        .quote-box {
+            background: #fef9e7;
+            border-left: 5px solid #f39c12;
+            padding: 20px 25px;
+            border-radius: 8px;
+            font-style: italic;
+            color: #555;
+            margin: 15px 0;
+            font-size: 1em;
+        }
+
+        .nav-controls {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .nav-btn {
+            background: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            color: #2c3e50;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s;
+        }
+
+        .nav-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+            background: #2c3e50;
+            color: white;
+        }
+
+        .slide-number {
+            position: absolute;
+            bottom: 25px;
+            right: 40px;
+            color: #bdc3c7;
+            font-size: 0.85em;
+        }
+
+        .logo-area {
+            position: absolute;
+            top: 30px;
+            right: 50px;
+            font-size: 0.8em;
+            color: #95a5a6;
+        }
+
+        hr {
+            border: none;
+            border-top: 1px solid #e0e0e0;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="presentation-container" id="presentation">
+        <!-- Diapositiva 1 - Portada -->
+        <div class="slide active">
+            <div class="slide-content">
+                <div style="margin-bottom: 20px; color: #e74c3c; font-weight: 600;">R3-2-S12 – Espacio diagnóstico binario</div>
+                <div class="cover-title">¿Por qué falla el sistema educativo?</div>
+                <div class="cover-subtitle">Diagnóstico de Integración Tecnológica</div>
+                <hr>
+                <div class="cover-info">
+                    <strong>Universidad de Cundinamarca</strong><br>
+                    Facultad de Ingeniería y Ciencias Básicas<br>
+                    Programa de Ingeniería de Sistemas<br><br>
+                    <strong>Institución evaluada:</strong> Colegio Jorge Tadeo Lozano<br>
+                    <strong>Muestra:</strong> 30 estudiantes de grado noveno (9°)<br>
+                    Fusagasugá, Cundinamarca • 2026
+                </div>
+            </div>
+            <div class="slide-number">1 / 7</div>
+        </div>
+
+        <!-- Diapositiva 2 - Problemática -->
+        <div class="slide">
+            <div class="slide-header">
+                <div class="slide-title">Problemática Tecnológica Detectada</div>
+                <div class="slide-subtitle">Colegio Jorge Tadeo Lozano – Fusagasugá</div>
+            </div>
+            <div class="slide-content">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 25px;">
+                    <div>
+                        <ul style="list-style: none; padding: 0; line-height: 2.5;">
+                            <li>🔴 Infraestructura tecnológica insuficiente</li>
+                            <li>🔴 Conectividad inestable y no confiable</li>
+                            <li>🔴 Limitada incorporación de IA y robótica</li>
+                            <li>🔴 Marcada brecha digital entre estudiantes</li>
+                            <li>🔴 Docentes sin formación pedagógica en TIC</li>
+                        </ul>
+                    </div>
+                    <div class="quote-box">
+                        <strong>Dato clave:</strong><br>
+                        "Ningún estudiante califica los equipos como excelentes y el 50% los considera malos o muy malos."
+                    </div>
+                </div>
+            </div>
+            <div class="slide-number">2 / 7</div>
+        </div>
+
+        <!-- Diapositiva 3 - Resultados Impactantes -->
+        <div class="slide">
+            <div class="slide-header">
+                <div class="slide-title">Resultados de la Encuesta</div>
+                <div class="slide-subtitle">Muestra: 30 estudiantes de grado noveno</div>
+            </div>
+            <div class="slide-content">
+                <div class="data-grid">
+                    <div class="data-card">
+                        <span class="data-number">60%</span>
+                        <span class="data-label">Usa herramientas digitales solo esporádicamente</span>
+                    </div>
+                    <div class="data-card red">
+                        <span class="data-number">90%</span>
+                        <span class="data-label">Nunca ha recibido formación en IA</span>
+                    </div>
+                    <div class="data-card orange">
+                        <span class="data-number">96.7%</span>
+                        <span class="data-label">No tiene acceso a robótica educativa</span>
+                    </div>
+                    <div class="data-card green">
+                        <span class="data-number">93.3%</span>
+                        <span class="data-label">Sin enseñanza en tecnologías emergentes</span>
+                    </div>
+                </div>
+            </div>
+            <div class="slide-number">3 / 7</div>
+        </div>
+
+        <!-- Diapositiva 4 - Conectividad e Infraestructura -->
+        <div class="slide">
+            <div class="slide-header">
+                <div class="slide-title">Conectividad e Infraestructura</div>
+                <div class="slide-subtitle">Percepción estudiantil sobre recursos tecnológicos</div>
+            </div>
+            <div class="slide-content">
+                <div class="chart-bar">
+                    <div class="chart-label">Internet limitado o inestable</div>
+                    <div class="chart-fill-container">
+                        <div class="chart-fill" style="width: 83.4%; background: #e74c3c;">83.4%</div>
+                    </div>
+                </div>
+                <div class="chart-bar">
+                    <div class="chart-label">Equipos regulares o malos</div>
+                    <div class="chart-fill-container">
+                        <div class="chart-fill" style="width: 90%; background: #e67e22;">90%</div>
+                    </div>
+                </div>
+                <div class="chart-bar">
+                    <div class="chart-label">Internet siempre estable</div>
+                    <div class="chart-fill-container">
+                        <div class="chart-fill" style="width: 3.3%; background: #27ae60;">3.3%</div>
+                    </div>
+                </div>
+                <div class="chart-bar">
+                    <div class="chart-label">Equipos excelentes</div>
+                    <div class="chart-fill-container">
+                        <div class="chart-fill" style="width: 0%; background: #2c3e50;">0%</div>
+                    </div>
+                </div>
+                <p style="text-align: center; margin-top: 20px; color: #7f8c8d;">
+                    <strong>Prioridad estudiantil:</strong> 46.7% pide más dispositivos | 33.3% exige mejor internet
+                </p>
+            </div>
+            <div class="slide-number">4 / 7</div>
+        </div>
+
+        <!-- Diapositiva 5 - Formación Docente -->
+        <div class="slide">
+            <div class="slide-header">
+                <div class="slide-title">Formación Docente en TIC</div>
+                <div class="slide-subtitle">Percepción de los estudiantes sobre sus profesores</div>
+            </div>
+            <div class="slide-content">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+                    <div>
+                        <div class="data-card red" style="margin-bottom: 15px;">
+                            <span class="data-number">70%</span>
+                            <span class="data-label">Docentes NO capacitados en TIC</span>
+                        </div>
+                        <div class="data-card">
+                            <span class="data-number">86.7%</span>
+                            <span class="data-label">Nunca ha visto actualización docente</span>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="chart-bar" style="flex-direction: column; align-items: flex-start;">
+                            <div class="chart-label" style="text-align: left; width: 100%; margin-bottom: 5px;">Innovación: Raramente o Nunca</div>
+                            <div class="chart-fill-container" style="width: 100%;">
+                                <div class="chart-fill" style="width: 83.4%; background: #c0392b;">83.4%</div>
+                            </div>
+                        </div>
+                        <p style="margin-top: 20px; line-height: 1.6; color: #555;">
+                            El <strong>0%</strong> de estudiantes percibe capacitación constante.<br>
+                            Solo el <strong>13.3%</strong> nota formación al inicio del año escolar.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="slide-number">5 / 7</div>
+        </div>
+
+        <!-- Diapositiva 6 - Árbol de Problemas -->
+        <div class="slide">
+            <div class="slide-header">
+                <div class="slide-title">Árbol de Problemas</div>
+                <div class="slide-subtitle">Causas estructurales y efectos en el aprendizaje</div>
+            </div>
+            <div class="slide-content">
+                <div class="problem-tree">
+                    <div style="color: #3498db; font-weight: 700; margin-bottom: 5px;">▼ EFECTOS ▼</div>
+                    <div class="tree-effects">
+                        <div class="tree-item">Bajo desarrollo de competencias digitales</div>
+                        <div class="tree-item">Brecha digital estudiantil</div>
+                        <div class="tree-item">Poco interés en áreas STEM</div>
+                        <div class="tree-item">Dificultad de adaptación al entorno digital</div>
+                    </div>
+                    <div class="tree-center">
+                        Deficiencias en la integración de tecnologías emergentes
+                    </div>
+                    <div style="color: #e74c3c; font-weight: 700; margin-top: 5px;">▲ CAUSAS ▲</div>
+                    <div class="tree-causes">
+                        <div class="tree-item">Infraestructura insuficiente</div>
+                        <div class="tree-item">Conectividad deficiente (83.4%)</div>
+                        <div class="tree-item">Escasa capacitación docente (70%)</div>
+                        <div class="tree-item">Baja implementación de IA y robótica</div>
+                        <div class="tree-item">Falta de laboratorios tecnológicos</div>
+                    </div>
+                </div>
+            </div>
+            <div class="slide-number">6 / 7</div>
+        </div>
+
+        <!-- Diapositiva 7 - Reflexión Final -->
+        <div class="slide">
+            <div class="slide-header">
+                <div class="slide-title">Reflexión Final</div>
+                <div class="slide-subtitle">Ingeniería de Sistemas – Universidad de Cundinamarca</div>
+            </div>
+            <div class="slide-content">
+                <div class="quote-box" style="font-size: 1.1em; line-height: 1.8;">
+                    "Fortalecer la integración de las TIC, la inteligencia artificial y la robótica en las instituciones educativas <strong>no es una opción secundaria</strong>, sino una necesidad imperativa para garantizar una educación pertinente, equitativa y alineada con los desafíos del siglo XXI."
+                </div>
+                <p style="margin-top: 25px; color: #2c3e50; text-align: center; font-size: 1.1em;">
+                    La tecnología como <strong>instrumento transformador</strong> para reducir desigualdades y abrir oportunidades.
+                </p>
+                <p style="text-align: center; color: #95a5a6; margin-top: 30px;">
+                    Integrantes: Santiago Martínez • Hernán López • Alejandro Nieto • Nicole Rodríguez<br>
+                    Asignatura: Sistemas Operativos • Profesor: Germán Ortiz Díaz
+                </p>
+            </div>
+            <div class="slide-number">7 / 7</div>
+        </div>
+    </div>
+
+    <div class="nav-controls">
+        <button class="nav-btn" onclick="prevSlide()">◀ Anterior</button>
+        <span id="pageIndicator" style="color: white; align-self: center; font-weight: 600;">1 / 7</span>
+        <button class="nav-btn" onclick="nextSlide()">Siguiente ▶</button>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const indicator = document.getElementById('pageIndicator');
+
+        function showSlide(index) {
+            slides.forEach((slide, i) => {
+                slide.classList.remove('active');
+                if (i === index) {
+                    slide.classList.add('active');
+                }
+            });
+            indicator.textContent = `${index + 1} / ${slides.length}`;
+        }
+
+        function nextSlide() {
+        // Solo avanza si NO está en la última diapositiva
+            if (currentSlide < slides.length - 1) {
+                currentSlide = currentSlide + 1;
+                showSlide(currentSlide);
+            }
+        // Si ya está en la última, no hace nada
+    }
+
+    function prevSlide() {
+        // Solo retrocede si NO está en la primera diapositiva
+            if (currentSlide > 0) {
+                currentSlide = currentSlide - 1;
+                showSlide(currentSlide);
+            }
+        // Si ya está en la primera, no hace nada
+    }
+
+        // Navegación con teclado
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+                nextSlide();
+            } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+                prevSlide();
+            }
+        });
+
+        // Inicializar
+        showSlide(0);
+    </script>
+
+</body>
+</html>
