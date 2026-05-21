@@ -2,131 +2,54 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <meta name="theme-color" content="#0a0a2a">
-    <title>EduTech Nexus · Microinteracciones de talla mundial</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>EduTech Nexus · Plataforma de Cursos TIC</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <!-- Sensor de luz ambiental oculto (API simulada + preferencia CSS) -->
-    <div class="ambient-sensor" aria-hidden="true"></div>
-
-    <!-- Contenedor principal -->
-    <main class="app-container">
-        <!-- BANNER INFO (contexto) -->
-        <section class="banner-info" aria-label="Contexto del problema educativo">
-            <div class="banner-glow"></div>
-            <div class="banner-content">
-                <div class="badge-wrapper">
-                    <span class="badge-live">DIAGNÓSTICO 2026</span>
-                    <span class="badge-stats">n=30 · Noveno grado</span>
-                </div>
-                <h1 class="banner-title">
-                    <span class="title-light">Fractura digital en</span>
-                    <span class="title-bold">Colegio Jorge Tadeo Lozano</span>
-                </h1>
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <span class="stat-number" data-target="90">0</span><span class="stat-symbol">%</span>
-                        <span class="stat-label">sin formación en IA</span>
-                    </div>
-                    <div class="stat-card">
-                        <span class="stat-number" data-target="96.7">0</span><span class="stat-symbol">%</span>
-                        <span class="stat-label">sin acceso a robótica</span>
-                    </div>
-                    <div class="stat-card">
-                        <span class="stat-number" data-target="83.4">0</span><span class="stat-symbol">%</span>
-                        <span class="stat-label">conectividad inestable</span>
-                    </div>
-                </div>
-                <p class="banner-description">
-                    Infraestructura deficiente · 70% docentes sin capacitación TIC · brecha curricular en IA, robótica y tecnologías emergentes.
-                    <strong>La solución no es más hardware, sino conocimiento accesible.</strong>
-                </p>
+    <div class="lms-container">
+        <!-- Cabecera institucional -->
+        <header class="lms-header">
+            <div class="header-title">
+                <h1>📘 UNIVERSIDAD DE CUNDINAMARCA</h1>
+                <p>Plataforma de apoyo en conocimiento · TIC, IA, Robótica y más</p>
             </div>
-            <div class="banner-decoration">
-                <div class="floating-shape shape-1"></div>
-                <div class="floating-shape shape-2"></div>
-            </div>
-        </section>
-
-        <!-- INTRO CURSO (solución planteada: página web de apoyo en conocimiento) -->
-        <section class="intro-curso" aria-label="Solución: plataforma de conocimiento">
-            <div class="intro-curve"></div>
-            <div class="intro-content">
-                <div class="icon-container">
-                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
+            <div class="progress-area">
+                <span class="progress-label">Progreso general</span>
+                <div class="progress-bar-bg">
+                    <div class="progress-fill" id="globalProgress" style="width: 0%;"></div>
                 </div>
-                <h2>Página web de apoyo en conocimiento</h2>
-                <p>No esperamos por laboratorios ni internet perfecto. Creamos una <strong>plataforma educativa liviana, accesible sin conexión total, con microlearning en TIC, Inteligencia Artificial, Robótica, Tecnologías Emergentes y más</strong>. El conocimiento no debe depender de la infraestructura.</p>
-                <div class="feature-tags">
-                    <span>📱 Diseño responsive táctil</span>
-                    <span>⚡ Feedback < 10 ms</span>
-                    <span>🌙 Contraste dinámico</span>
-                    <span>♿ Accesibilidad avanzada</span>
+                <span id="progressPercent" class="progress-percent">0%</span>
+            </div>
+        </header>
+
+        <!-- Grilla de tarjetas (cards) con los 6 módulos -->
+        <div class="cards-grid" id="cardsGrid">
+            <!-- Las 6 cards se generarán dinámicamente con JS para mantener el código limpio,
+                pero las escribo directamente para que sea autocontenido y fácil de editar -->
+        </div>
+    </div>
+
+    <!-- Modal para mostrar el video + cuestionario -->
+    <div id="modalLeccion" class="modal-overlay">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h2 id="modalTitulo">Título del módulo</h2>
+                <button class="close-modal" id="closeModalBtn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="video-wrapper">
+                    <iframe id="videoFrame" src="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                </div>
+                <div class="quiz-section" id="quizSection">
+                    <h3>📝 Cuestionario (5 preguntas)</h3>
+                    <div id="preguntasContainer"></div>
+                    <button id="submitQuizBtn" class="btn-submit">✅ Verificar respuestas</button>
+                    <div id="quizFeedback" class="quiz-feedback"></div>
                 </div>
             </div>
-        </section>
-
-        <!-- SECCIÓN DE CURSOS (B1, B2, B3, B4, B5) -->
-        <section class="cursos-section" aria-label="Módulos de formación">
-            <div class="section-header">
-                <div class="header-line"></div>
-                <h3>Rutas de aprendizaje</h3>
-                <div class="header-line"></div>
-            </div>
-            <div class="cursos-grid" id="cursosGrid">
-                <!-- Cada botón es un curso → tu editarás los href -->
-                <div class="curso-card" data-card-id="1">
-                    <div class="card-glow"></div>
-                    <div class="card-icon">🤖</div>
-                    <h4>Inteligencia Artificial</h4>
-                    <p>Prompt engineering, asistentes, ética IA. Desde cero.</p>
-                    <a href="#" class="btn-curso" data-url-editable="https://tusitio.com/ia">Acceder al curso →</a>
-                </div>
-                <div class="curso-card" data-card-id="2">
-                    <div class="card-glow"></div>
-                    <div class="card-icon">⚙️</div>
-                    <h4>Robótica Educativa</h4>
-                    <p>Simuladores, lógica de sensores, Arduino virtual.</p>
-                    <a href="#" class="btn-curso" data-url-editable="https://tusitio.com/robotica">Acceder al curso →</a>
-                </div>
-                <div class="curso-card" data-card-id="3">
-                    <div class="card-glow"></div>
-                    <div class="card-icon">🌐</div>
-                    <h4>Tecnologías Emergentes</h4>
-                    <p>IoT, Realidad Aumentada, Blockchain aplicado.</p>
-                    <a href="#" class="btn-curso" data-url-editable="https://youtu.be/m8fPAfNyZVY?si=0Oy_G9zRXPz28qQA">Acceder al curso →</a>
-                </div>
-                <div class="curso-card" data-card-id="4">
-                    <div class="card-glow"></div>
-                    <div class="card-icon">💻</div>
-                    <h4>Infraestructura TIC</h4>
-                    <p>Hardware, redes, mantenimiento y buenas prácticas.</p>
-                    <a href="#" class="btn-curso" data-url-editable="https://tusitio.com/tic">Acceder al curso →</a>
-                </div>
-                <div class="curso-card" data-card-id="5">
-                    <div class="card-glow"></div>
-                    <div class="card-icon">👩‍🏫</div>
-                    <h4>Competencias Docentes TIC</h4>
-                    <p>Metodologías activas, gamificación, evaluación digital.</p>
-                    <a href="#" class="btn-curso" data-url-editable="https://tusitio.com/docentes">Acceder al curso →</a>
-                </div>
-            </div>
-        </section>
-
-        <!-- Footer sutil -->
-        <footer class="footer-ux">
-            <p>Microinteracciones de talla mundial · CLS &lt; 0.01 · Latencia fantasma &lt; 10ms · Curvas físicas personalizadas</p>
-        </footer>
-    </main>
-
-    <!-- Skeleton loader oculto (para simular latencia) -->
-    <div id="skeletonLoader" class="skeleton-overlay" aria-hidden="true"></div>
+        </div>
+    </div>
 
     <script src="script.js"></script>
 </body>
